@@ -1,0 +1,22 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Build app
+        run: ./scripts/build-app.sh
+
+      - name: Check bundle
+        run: |
+          plutil -p "build/Icon Picker.app/Contents/Info.plist" | grep -E 'CFBundle(Short)?Version|SUFeedURL'
+          lipo -archs "build/Icon Picker.app/Contents/MacOS/IconPicker"
